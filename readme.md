@@ -9,7 +9,7 @@ This module is only compatible with projects based on the 5HTP framework (still 
 ## Installation
 
 ```bash
-npm i --save @5htp/auth-linkedin
+npm i --save 5htp-auth-linkedin
 ```
 
 ## How it works basically
