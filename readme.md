@@ -1,4 +1,4 @@
-# LikedIn OAuth2.0 for 5HTP
+# LinkedIn OAuth2.0 for 5HTP
 
 5HTP module for easily handling the LinkedIn OAuth2.0 process, and retrieve and final access token.
 
