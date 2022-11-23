@@ -1,0 +1,38 @@
+{
+    "name": "5htp-auth-linkedin",
+    "author": "Gaetan Le Gac <contact@gaetan-legac.fr>",
+    "description": "5HTP module for retrieving LinkedIn Oauth access token easily.",
+    "keywords": [
+        "5htp",
+        "auth",
+        "oauth",
+        "linkedin",
+        "access token",
+        "token",
+        "authentication",
+        "oauth2",
+        "module",
+        "plugin",
+        "extension"
+    ],
+    "version": "0.0.1",
+    "license": "MIT",
+    "private": false,
+    "main": "bin/index.js",
+    "files": [
+        "bin"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/gaetanlegac/5htp-auth-linkedin.git"
+    },
+    "scripts": {},
+    "devDependencies": {
+        "@types/node": "^18.11.9",
+        "typescript": "^4.3.5"
+    },
+    "dependencies": {
+        "got": "^12.5.3",
+        "short-unique-id": "^4.4.4"
+    }
+}
