@@ -1,22 +1,36 @@
 # LinkedIn OAuth2.0 for 5HTP
 
-5HTP module for easily handling the LinkedIn OAuth2.0 process, and retrieve and final access token.
+5HTP plugin for easily handling the LinkedIn OAuth2.0 process, and retrieve and final access token.
 
-This module is only compatible with projects based on 5HTP, an experimental Full Stack framework designed for performance and productivity.
+**This plugin is only compatible with projects based on 5HTP, a early-stage Node/TS/Preact framework designed for performance and productivity.**
 
 [![npm](https://img.shields.io/npm/v/5htp-auth-linkedin)](https://www.npmjs.com/package/5htp-auth-linkedin) [![npm](https://img.shields.io/npm/dw/5htp-auth-linkedin)](https://www.npmjs.com/package/5htp-auth-linkedin)
-
-## Installation
-
-```bash
-npm i --save 5htp-auth-linkedin
-```
 
 ## How it works basically
 
 1. The user clicks on the auth button
 2. He're redirected to the LinkedIn authorization page, asking to the user if he wants to login with your app and provide his data (email, etc ...)
 3. `5htp-auth-linkedin` receive an Authorization token, which is then converted to an access token you can finally use to make API requests on LinkedIn
+
+## Definitions
+
+5HTP Service ID: `linkedinAuth`
+Availability: `globally`
+
+### Methods:
+
+```typescript
+// Run on user's action (ex: when he clicks on the "Login with LinkedIn" button)
+$.linkedinAuth.requestAuthCode( context?: object, scopes?: string[] ): Promise<string>;
+// Run on LinkedIn's callback response
+$.linkedinAuth.handleResponse( linkedInResponse: Request ): Promise<LinkedInResponse>;
+```
+
+## Installation
+
+```bash
+npm i --save 5htp-auth-linkedin
+```
 
 ## Configuration
 
@@ -28,7 +42,7 @@ npm i --save 5htp-auth-linkedin
 
 ### Step 2: Update your config file
 
-Enable this service module in your app by importing it in `@/server/index.ts`:
+Enable this service plugin in your app by importing it in `@/server/index.ts`:
 
 ```typescript
 import '5htp-auth-linkedin';
@@ -75,17 +89,15 @@ route.page('/auth', {}, null, () => (
 // Core deps
 import app, { $ } from '@server/app';
 const route = $.route;
-import { ForbiddenAccess } from '@server/common';
+import { Forbidden } from '@common/errors';
 
 // Step 1: Retrieve auth code
-route.get('/auth/linkedin', {  }, async ({ response }) => {
+route.get('/auth/linkedin', {  }, async ({ response, user }) => {
 
-    const redirectUri = await $.linkedinAuth.requestAuthCode(
-        // Context you want to receive in the callback
-        { actionName: 'linkedinLogin' }
-        // LinkedIn scopes
-        ['r_emailaddress', 'r_liteprofile'],
-    );
+    const redirectUri = await $.linkedinAuth.requestAuthCode({ 
+        // You can pass data to callback (step 2)
+        userId: user.id
+    });
 
     return response.redirect(redirectUri);
 
@@ -98,15 +110,9 @@ route.get('/auth/linkedin/callback', {  }, async ({ request }) => {
 
     // Handle error
     if ('error' in res)
-        throw new ForbiddenAccess(res.error.message);
+        throw new Forbidden(res.error.message);
 
-    console.log('Access token:', res.accessToken);
-
-    if (res.context.actionName === 'linkedinLogin') {
-        // Use the access token here
-        // Ex: make API calls to LinkedIn
-    }
-    
-    return true;
+    return `Access token: ${res.accessToken} ; User ID: ${res.context.userId}`
 
 });
+```

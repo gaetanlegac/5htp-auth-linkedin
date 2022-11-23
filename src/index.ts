@@ -65,8 +65,8 @@ class LinkedInAuthService {
 
     // Step 1: Request Authorization Code
     public async requestAuthCode<TContext extends TContextObject>( 
-        scope: TScope[],
-        context?: TContext
+        context?: TContext,
+        scope: TScope[] = [...scopes],
     ): Promise<string> {
 
         this.debug && console.log(LogPrefix, `Request auth code for scopes ${scope.join(', ')}. Context =`, context);
