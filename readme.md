@@ -2,9 +2,9 @@
 
 5HTP module for easily handling the LinkedIn OAuth2.0 process, and retrieve and final access token.
 
-[![npm](https://img.shields.io/npm/v/5htp-auth-linkedin)](https://www.npmjs.com/package/5htp-auth-linkedin) [![npm](https://img.shields.io/npm/dw/5htp-auth-linkedin)](https://www.npmjs.com/package/5htp-auth-linkedin)
+This module is only compatible with projects based on 5HTP, an experimental Full Stack framework designed for performance and productivity.
 
-This module is only compatible with projects based on the 5HTP framework (still in development).
+[![npm](https://img.shields.io/npm/v/5htp-auth-linkedin)](https://www.npmjs.com/package/5htp-auth-linkedin) [![npm](https://img.shields.io/npm/dw/5htp-auth-linkedin)](https://www.npmjs.com/package/5htp-auth-linkedin)
 
 ## Installation
 
@@ -59,7 +59,7 @@ import route from '@router';
 import Button from '@client/components/button';
 
 // Component
-route.page('/companies', {}, null, () => (
+route.page('/auth', {}, null, () => (
 
     <Button link="/auth/linkedin" target="_blank">
         Login with Linkedin
