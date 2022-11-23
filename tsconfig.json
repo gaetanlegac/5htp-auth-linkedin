@@ -5,12 +5,19 @@
         "skipLibCheck": true,
         "downlevelIteration": true,
         "declaration": true,
-        "lib": ["es2020", "dom"]
+        "lib": ["es2020", "dom"],
+        
+        "rootDir": ".",
+        "paths": {
+            "@server/*": ["./node_modules/5htp-core/src/server/*"],
+            "@common/*": ["./node_modules/5htp-core/src/common/*"],
+            "@client/*": ["./node_modules/5htp-core/src/client/*"],
+        }
     },
     "include": [
         "./src"
     ],
     "exclude": [
         "node_modules"
-    ]
+    ],
 }
