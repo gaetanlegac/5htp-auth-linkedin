@@ -9,10 +9,11 @@ const uid = new ShortUniqueId();
 
 // Core
 import app from '@server/app';
-import { Anomaly } from '@common/errors';
+import { Anomaly, Forbidden } from '@common/errors';
 import ServerRequest from '@server/services/router/request';
 
 // App
+import LinkedInAPI, { TProfile } from './apiv2';
 
 /*----------------------------------
 - CONFIG
@@ -22,8 +23,10 @@ const config = app.config.linkedinAuth;
 const scopes = ['r_emailaddress', 'r_liteprofile'] as const;
 const LogPrefix = '[auth][linkedin]';
 
+const baseUrl = 'https://www.linkedin.com/oauth/v2';
+
 /*----------------------------------
-- TYPES
+- TYPES: SERVICE
 ----------------------------------*/
 
 type TScope = typeof scopes[number]
@@ -76,7 +79,7 @@ class LinkedInAuthService {
             : '{}' 
         ).toString('base64')
         
-        const response = await got.get('https://www.linkedin.com/oauth/v2/authorization', {
+        const response = await got.get( baseUrl + '/authorization', {
             searchParams: {
                 response_type: 'code',
                 client_id: config.id,
@@ -93,9 +96,11 @@ class LinkedInAuthService {
     }
 
     // Step 2: Exchange Authorization Code for an Access Token
-    public async handleResponse<TContext extends TContextObject>({
-        schema
-    }: ServerRequest): Promise<{ context: TContext } & ({ accessToken: string } | { error: Error })> {
+    public async handleResponse<TContext extends TContextObject>({  schema }: ServerRequest): Promise<{ 
+        profile: TProfile, 
+        context: TContext,
+        accessToken: string
+    }> {
 
         const res = await schema.validate({
             state: schema.string(),
@@ -116,10 +121,14 @@ class LinkedInAuthService {
         }
 
         if (error)
-            return { error, context };
+            throw new Forbidden(res.error.message);
 
         const accessToken = await this.requestAccessToken( res.code );
-        return { accessToken, context }
+
+        const linkedInAPI = new LinkedInAPI( accessToken, this.debug );
+        const profile = await linkedInAPI.getProfile();
+        
+        return { profile, context, accessToken }
 
     }
 
@@ -148,7 +157,7 @@ class LinkedInAuthService {
 
         this.debug && console.log(LogPrefix, `Exchange  Authorization Code "${authCode}" for an Access Token`);
 
-        const response = await got.post('https://www.linkedin.com/oauth/v2/accessToken', {
+        const response = await got.post( baseUrl + '/accessToken', {
             headers: {
                 Accept: 'application/json'
             },

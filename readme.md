@@ -1,6 +1,6 @@
 # LinkedIn OAuth2.0 for 5HTP
 
-5HTP plugin for easily handling the LinkedIn OAuth2.0 process, and retrieve and final access token.
+Easy LinkedIn Authentication Plugin for 5HTP.
 
 **This plugin is only compatible with projects based on 5HTP, a early-stage Node/TS/Preact framework designed for performance and productivity.**
 
@@ -14,8 +14,8 @@
 
 ## Definitions
 
-5HTP Service ID: `linkedinAuth`
-Availability: `globally`
+* 5HTP Service ID: `linkedinAuth`
+* Availability: `global`
 
 ### Methods:
 
@@ -23,7 +23,11 @@ Availability: `globally`
 // Run on user's action (ex: when he clicks on the "Login with LinkedIn" button)
 $.linkedinAuth.requestAuthCode( context?: object, scopes?: string[] ): Promise<string>;
 // Run on LinkedIn's callback response
-$.linkedinAuth.handleResponse( linkedInResponse: Request ): Promise<LinkedInResponse>;
+$.linkedinAuth.handleResponse( linkedInResponse: Request ): Promise<{
+    profile: { firstName: string, lastName: string, email: string },
+    context: object,
+    accessToken: string
+}>;
 ```
 
 ## Installation
@@ -91,11 +95,11 @@ import app, { $ } from '@server/app';
 const route = $.route;
 import { Forbidden } from '@common/errors';
 
-// Step 1: Retrieve auth code
+// Step 1: Redurect to LinkedIn's authorizatin page
 route.get('/auth/linkedin', {  }, async ({ response, user }) => {
 
     const redirectUri = await $.linkedinAuth.requestAuthCode({ 
-        // You can pass data to callback (step 2)
+        // You can pass context data to callback (step 2)
         userId: user.id
     });
 
@@ -103,16 +107,19 @@ route.get('/auth/linkedin', {  }, async ({ response, user }) => {
 
 });
 
-// Step 2: Handle LinkedIn's response
+// Step 2: Receive LinkedIn's response and retrieve profile data
 route.get('/auth/linkedin/callback', {  }, async ({ request }) => {
     
-    const res = await $.linkedinAuth.handleResponse(linkedInResponse);
+    const { 
+        profile, // User profile data: firstName, lastName, email
+        context, // The context you passed in step 1
+        accessToken // The LinkedIn access token if you want do to other API calls
+    } = await $.linkedinAuth.handleResponse(linkedInResponse);
 
-    // Handle error
-    if ('error' in res)
-        throw new Forbidden(res.error.message);
-
-    return `Access token: ${res.accessToken} ; User ID: ${res.context.userId}`
+    return `
+        Hi ${profile.firstName} ${profile.lastName}, 
+        Your email is ${profile.email} and I also remind your user ID is ${res.context.userId}.
+    `
 
 });
 ```

@@ -1,7 +1,7 @@
 {
     "name": "5htp-auth-linkedin",
     "author": "Gaetan Le Gac <contact@gaetan-legac.fr>",
-    "description": "5HTP module for retrieving LinkedIn Oauth access token easily.",
+    "description": "LinkedIn Authentication Plugin for 5HTP apps.",
     "keywords": [
         "5htp",
         "auth",
@@ -15,7 +15,7 @@
         "plugin",
         "extension"
     ],
-    "version": "0.0.1-4",
+    "version": "0.0.2",
     "license": "MIT",
     "private": false,
     "main": "src/index.ts",
