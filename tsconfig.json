@@ -6,6 +6,7 @@
         "downlevelIteration": true,
         "declaration": true,
         "lib": ["es2020", "dom"],
+        "esModuleInterop": true,
         
         "rootDir": ".",
         "paths": {
